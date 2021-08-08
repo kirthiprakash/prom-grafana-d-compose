@@ -1,0 +1,45 @@
+version: '3.4'
+services:
+  prometheus:
+    user: "1000:1000"
+    image: prom/prometheus:latest
+    container_name: monitoring_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./configs:/etc/prometheus/
+      - ./data/prometheus/data:/prometheus
+    expose:
+      - 9090
+  #  ports:
+  #    - 9090:9090  
+    network_mode: host
+    
+  grafana:
+    user: "472"
+    image: grafana/grafana:latest
+    container_name: monitoring_grafana
+    restart: unless-stopped
+    network_mode: host
+    expose:
+      - 3000
+    # links:
+    #   - prometheus:prometheus
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=MYPASSWORD
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=myrul.com
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=smtp.gmail.com:587
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter
+    restart: unless-stopped
+    network_mode: host
+    expose:
+      - 9100
+  debug-container:
+    image: python:3.6
+    container_name: monitoring_debugger
+    entrypoint: tail -f /etc/resolv.conf
