@@ -27,4 +27,4 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ['localhost:8001', 'node-exporter:9100']
+      - targets: ['localhost:8001', 'localhost:9100']
